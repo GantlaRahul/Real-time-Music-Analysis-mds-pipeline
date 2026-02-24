@@ -1,233 +1,181 @@
-📌 Project Overview
+# 🎧 Spotify Modern Data Stack Project  
+**Snowflake • DBT • Apache Airflow • Apache Kafka • Python • Docker • Power BI**
 
-This project demonstrates an end-to-end real-time data engineering pipeline for Spotify-style music analytics using a Modern Data Stack architecture.
+---
 
-We simulate live Spotify streaming data — including song plays, listeners, regions, and device types — and build a fully automated pipeline from ingestion to visualization.
+## 📌 Project Overview
 
-Once the pipeline is started, the entire workflow runs automatically:
+This project demonstrates an end-to-end **real-time data engineering pipeline** for Spotify-style music analytics using a Modern Data Stack architecture.
+
+The system simulates live Spotify streaming data — including song plays, listeners, regions, and device types — and builds a fully automated pipeline from ingestion to visualization.
+
+Once started, the pipeline runs automatically:
 
 Data Simulation → Kafka Streaming → MinIO Storage → Snowflake (Bronze) → DBT Transformations (Silver & Gold) → Power BI Dashboard
 
-This project mirrors a real-world production-grade Spotify analytics system built using industry-standard cloud data tools.
+This project mirrors a production-grade Spotify analytics system built using modern cloud data tools.
 
-🏗️ Architecture
-🔄 Pipeline Flow
+---
 
-Data Simulator (Python + Faker)
-Generates fake Spotify streaming events:
+## 🏗️ Architecture
 
-user_id
+### 🔄 Pipeline Flow
 
-track_name
+1. **Data Simulator (Python + Faker)**  
+   Generates fake Spotify streaming events:
+   - user_id  
+   - track_name  
+   - artist  
+   - region  
+   - device_type  
+   - timestamp  
+   - duration  
 
-artist
+2. **Kafka Producer**  
+   Streams real-time events into Kafka topics.
 
-region
+3. **Kafka Consumer**  
+   Consumes streaming events and stores raw JSON data into MinIO (S3-compatible object storage).
 
-device_type
+4. **Apache Airflow**  
+   - DAG 1 → Loads raw data from MinIO into Snowflake Bronze layer  
+   - DAG 2 → Triggers DBT transformation runs  
 
-timestamp
+5. **Snowflake Data Warehouse**
+   - Bronze Layer → Raw ingested data  
+   - Silver Layer → Cleaned and standardized data  
+   - Gold Layer → Aggregated, analytics-ready models  
 
-duration
+6. **DBT**
+   - Builds staging, fact, and dimension models  
+   - Implements data tests  
+   - Runs transformations directly inside Snowflake  
 
-Kafka Producer
-Streams real-time events into Kafka topics.
+7. **Power BI**
+   - Connects to Snowflake Gold tables  
+   - Builds interactive dashboards  
 
-Kafka Consumer
-Consumes streaming events and stores raw JSON data into MinIO (S3-compatible storage).
+---
 
-Apache Airflow
+## ⚡ Tech Stack
 
-DAG 1 → Loads raw data from MinIO into Snowflake Bronze layer
+| Layer | Tools Used |
+|-------|------------|
+| Data Simulation | Python, Faker |
+| Streaming | Apache Kafka |
+| Storage | MinIO (S3-compatible) |
+| Data Warehouse | Snowflake |
+| Transformation | DBT |
+| Orchestration | Apache Airflow |
+| Visualization | Power BI |
+| Deployment | Docker, docker-compose |
 
-DAG 2 → Triggers DBT transformations
+---
 
-Snowflake Data Warehouse
-
-Bronze Layer → Raw ingested data
-
-Silver Layer → Cleaned and standardized data
-
-Gold Layer → Aggregated, analytics-ready models
-
-DBT
-
-Builds staging, fact, and dimension models
-
-Implements testing and documentation
-
-Runs transformations inside Snowflake
-
-Power BI
-
-Connects directly to Snowflake Gold tables
-
-Builds interactive dashboards
-
-⚡ Tech Stack
-Layer	Tools Used
-Simulation	Python, Faker
-Streaming	Apache Kafka
-Storage	MinIO (S3-compatible)
-Warehouse	Snowflake
-Transformation	DBT
-Orchestration	Apache Airflow
-Visualization	Power BI
-Deployment	Docker, docker-compose
-🏛️ Data Architecture – Medallion Model
+## 🏛️ Data Architecture – Medallion Model
 
 Implemented inside Snowflake:
 
-🥉 Bronze
-
+### 🥉 Bronze
 Raw JSON data loaded from MinIO.
 
-🥈 Silver
+### 🥈 Silver
+- Cleaned column names  
+- Standardized timestamps  
+- Removed duplicates  
+- Data validation  
 
-Cleaned columns
-
-Standardized timestamps
-
-Removed duplicates
-
-Data validation
-
-🥇 Gold
-
+### 🥇 Gold
 Analytics-ready models:
+- Top Artists by Plays  
+- Most-Streamed Regions  
+- Listening Trends Over Time  
+- Device Usage Distribution  
 
-🎵 Top Artists by Plays
+---
 
-🌎 Most-Streamed Regions
+## 📂 Repository Structure
 
-📈 Listening Trends Over Time
+---
 
-💽 Device Usage Distribution
+## ⚙️ Implementation Steps
 
-📂 Repository Structure
-spotify-mds-pipeline/
-│
-├── docker/
-│   ├── .env
-│   ├── docker-compose.yml
-│   └── dags/
-│       ├── minio-to-kafka.py
-│
-├── spotify_dbt/
-│   └── models/
-│       ├── gold/
-│       ├── silver/
-│       └── sources.yml
-│
-├── simulator/
-│   ├── producer.py
-│   └── .env
-│
-├── consumer/
-│   ├── kafka-to-minio.py
-│   └── .env
-│
-├── docker-compose.yml
-├── requirements.txt
-└── README.md
-⚙️ Step-by-Step Implementation
-1️⃣ Data Simulation
+### 1️⃣ Data Simulation
+- Generated synthetic Spotify streaming events using Python + Faker  
+- Continuous stream of realistic song-play data  
 
-Generated synthetic Spotify streaming events using Python + Faker
+### 2️⃣ Kafka Streaming
+- Producer pushes events to Kafka topics  
+- Consumer stores events in MinIO as raw JSON  
 
-Continuous stream of realistic song-play data
+### 3️⃣ Airflow Orchestration
+- Automates ingestion to Snowflake Bronze  
+- Triggers DBT runs for Silver and Gold transformations  
 
-2️⃣ Kafka Streaming
+### 4️⃣ DBT Transformations
+**Staging Models**
+- Clean column names  
+- Handle null values  
+- Standardize timestamps  
 
-Producer pushes events to Kafka topics
+**Marts**
+- Facts → plays, listeners  
+- Dimensions → tracks, artists, devices, regions  
 
-Consumer stores events in MinIO as raw JSON
+Run tests and documentation:
 
-3️⃣ Airflow Orchestration
+---
 
-Automates ingestion to Snowflake Bronze
-
-Triggers DBT runs for Silver and Gold transformations
-
-4️⃣ DBT Transformations
-
-Staging Models
-
-Clean column names
-
-Handle null values
-
-Standardize timestamps
-
-Marts
-
-Facts → plays, listeners
-
-Dimensions → tracks, artists, devices, regions
-
-Automated testing:
-
-dbt test
-dbt docs generate
-📊 Power BI Dashboard
+## 📊 Power BI Dashboard
 
 Connected directly to Snowflake Gold layer.
 
-Interactive visualizations include:
+Dashboard includes:
 
-🎵 Top Artists / Songs by Plays
+- Top Artists / Songs by Plays  
+- Regional Heatmap  
+- Streaming Trends Over Time  
+- Device-Type Distribution  
 
-🌎 Regional Heatmap
+---
 
-📈 Streaming Trends Over Time
+## ✅ Key Features
 
-💽 Device-Type Distribution
+✔ Fully automated real-time pipeline  
+✔ Kafka-based streaming architecture  
+✔ Snowflake Medallion architecture (Bronze → Silver → Gold)  
+✔ Modular SQL modeling using DBT  
+✔ Automated orchestration via Airflow  
+✔ Containerized deployment with Docker  
+✔ CI/CD integration with DBT test automation  
 
-✅ Key Features
+---
 
-✔ Fully automated real-time pipeline
-✔ Kafka-based streaming architecture
-✔ Snowflake Medallion architecture (Bronze → Silver → Gold)
-✔ Modular SQL modeling using DBT
-✔ Automated DAG orchestration via Airflow
-✔ Containerized deployment with Docker
-✔ CI/CD integration with DBT test automation
-✔ Production-style data engineering design
+## 🚀 How to Run
 
-🧠 Concepts Demonstrated
+1. Clone the repository  
+2. Configure environment variables in `.env`  
+3. Run:
 
-Real-time data ingestion
+4. Trigger Airflow DAGs  
+5. Connect Power BI to Snowflake Gold layer  
 
-Event-driven architecture
+---
 
-Medallion data modeling
+## 🧠 Concepts Demonstrated
 
-Cloud data warehousing
+- Real-time data ingestion  
+- Event-driven architecture  
+- Medallion data modeling  
+- Cloud data warehousing  
+- Workflow orchestration  
+- Business intelligence visualization  
+- End-to-end Modern Data Stack implementation  
 
-Data transformation engineering
+---
 
-Workflow orchestration
+## 👨‍💻 Author
 
-Business intelligence visualization
-
-End-to-end Modern Data Stack implementation
-
-🚀 How to Run
-
-Clone the repository
-
-Configure .env variables
-
-Run:
-
-docker-compose up --build
-
-Trigger Airflow DAGs
-
-Open Power BI and connect to Snowflake Gold layer
-
-👨‍💻 Author
-
-Rahul
-M.Sc. Data Analytics Student
-Berlin, Germany
+Rahul  
+M.Sc. Data Analytics Student  
+Berlin, Germany  
